@@ -6,21 +6,26 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/05 16:59:54 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/06 15:11:18 by thomas           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 #include "get_next_line.h"
+#include <stdio.h>
 
 void	ft_read_fd(const int fd, char **s);
+void	ft_get_line_n(char **s, char **line, int n);
 
 int		get_next_line(const int fd, char **line)
 {
+	static int n;
+	static char **tab;
 	char *s;
 	s = (char*)malloc(sizeof(s));
 	ft_read_fd(fd, &s);
-	printf("%s\n", s);
+	ft_putstr(ft_strsplit(s, '\n')[2]);
+	n++;
 	return (0);
 }
 
@@ -49,6 +54,9 @@ int main (void)
 	fd = open("sample", O_RDONLY);
 	if (fd == -1)
 		return (-1);
+	get_next_line((const int)fd, &p_s);
+	//printf("%s", p_s);
 	//get_next_line((const int)fd, &p_s);
+	//printf("%s", p_s);
 	return (0);
 }
