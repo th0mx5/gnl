@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/06 16:04:43 by thomas           ###   ########.fr       */
+/*   Updated: 2017/12/11 17:36:07 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,51 +14,67 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-void	ft_read_fd(const int fd, char **s);
-void	ft_get_line_n(char **s, char **line, int n);
-
-int		get_next_line(const int fd, char **line)
+static int	ft_read_fd(const int fd, char **s)
 {
-	static int n;
-	static char **tab;
-	char *s;
-	s = (char*)malloc(sizeof(s));
-	ft_read_fd(fd, &s);
-	s = ft_strsplit(s, '\n')[2];
-	ft_strcpy(*line, s);
-	free(s);
-	n++;
-	return (0);
-}
-
-void	ft_read_fd(const int fd, char **s)
-{
-	char buff[BUFF_SIZE + 1];
-	int ret;
-	char *p_s;
+	char	buff[BUFF_SIZE + 1];
+	int		ret;
+	char	*p_s;
 
 	while ((ret = read(fd, buff, BUFF_SIZE)))
 	{
+		if (ret == -1)
+			return (-1);
 		p_s = *s;
 		buff[ret] = 0;
 		*s = ft_strjoin(*s, buff);
 		free(p_s);
 	}
+	return (0);
 }
 
-int main (void)
+int			get_next_line(const int fd, char **line)
 {
-	int fd;
-	char s[1024];
-	char *p_s;
+	static int	n;
+	static char **tab;
+	char		*s;
+	int			i;
 
-	p_s = s;
+	i = 0;
+	if (fd < 0)
+		return (-1);
+	if (n == 0)
+	{
+		s = (char*)malloc(sizeof(s));
+		if (ft_read_fd(fd, &s) == -1)
+			return (-1);
+		if (s[0] == '\0' || (s[0] == '\n' && s[1] == '\0'))
+			return (0);
+		tab = ft_strsplit(s, '\n');
+		ft_strcpy(*line, tab[n]);
+		free(s);
+	}
+	else if (n != 0 && tab[n] == 0)
+		return (0);
+	ft_strcpy(*line, tab[n]);
+	n++;
+	return (1);
+}
+
+int			main(void)
+{
+	int		fd;
+	char	str[1024];
+	char	*s;
+	int		ret;
+
+	ret = 0;
+	s = str;
 	fd = open("sample", O_RDONLY);
 	if (fd == -1)
 		return (-1);
-	get_next_line((const int)fd, &p_s);
-	ft_putstr(p_s);
-	get_next_line((const int)fd, &p_s);
-	ft_putstr(p_s);
+	while ((ret = get_next_line((const int)fd, &s) > 0))
+	{
+		printf("ret = %d, s = %s\n", ret, s);
+	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/06 13:54:04 by thomas           ###   ########.fr       */
+/*   Updated: 2017/12/11 16:12:16 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,6 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 
-int get_next_line(const int fd, char **line);
+int			get_next_line(const int fd, char **line);
 
 #endif
