@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/11 17:36:07 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/13 17:22:27 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,67 +14,75 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-static int	ft_read_fd(const int fd, char **s)
+static int	ft_strclen(char *s, char c)
+{
+	int i;
+
+	i = 0;
+	while (s[i] && s[i] != c)
+		i++;
+	return (i);
+}
+
+static int	ft_read_fd(const int fd, char **tmp_line)
 {
 	char	buff[BUFF_SIZE + 1];
+	//char	*p_s;
 	int		ret;
-	char	*p_s;
 
-	while ((ret = read(fd, buff, BUFF_SIZE)))
+	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
 	{
-		if (ret == -1)
-			return (-1);
-		p_s = *s;
 		buff[ret] = 0;
-		*s = ft_strjoin(*s, buff);
-		free(p_s);
+		*tmp_line = ft_strjoin(*tmp_line, buff);
+		if (ft_strchr(buff, '\n'))
+			break ;
 	}
-	return (0);
+	if (ret == -1)
+		return (-1);
+	if (ret == 0 && *tmp_line[0] == '\0')
+		return (0);
+	*tmp_line = ft_strsub(*tmp_line, 0, ft_strlen(*tmp_line));
+	return (1);
 }
 
 int			get_next_line(const int fd, char **line)
 {
-	static int	n;
-	static char **tab;
-	char		*s;
-	int			i;
+	static char	*s;
+	int			ret;
+	int			f_endline;
 
-	i = 0;
-	if (fd < 0)
+	if (fd < 0 || line == NULL)
 		return (-1);
-	if (n == 0)
+	if (s == NULL)
 	{
-		s = (char*)malloc(sizeof(s));
-		if (ft_read_fd(fd, &s) == -1)
-			return (-1);
-		if (s[0] == '\0' || (s[0] == '\n' && s[1] == '\0'))
-			return (0);
-		tab = ft_strsplit(s, '\n');
-		ft_strcpy(*line, tab[n]);
-		free(s);
+		s = ft_strnew(1);
+		ret = ft_read_fd(fd, &s);
+		f_endline = ft_strclen(s, '\n');
+		*line = ft_strsub(s, 0, f_endline);
+		s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline);
 	}
-	else if (n != 0 && tab[n] == 0)
-		return (0);
-	ft_strcpy(*line, tab[n]);
-	n++;
-	return (1);
+	else
+	{
+		ret = ft_read_fd(fd, &s);
+		f_endline = ft_strclen(s, '\n');
+		*line = ft_strsub(s, 0, f_endline);
+		s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline);
+	}
+	return (ret);
 }
 
-int			main(void)
+/*int			main(void)
 {
 	int		fd;
-	char	str[1024];
 	char	*s;
 	int		ret;
 
 	ret = 0;
-	s = str;
 	fd = open("sample", O_RDONLY);
 	if (fd == -1)
 		return (-1);
 	while ((ret = get_next_line((const int)fd, &s) > 0))
-	{
 		printf("ret = %d, s = %s\n", ret, s);
-	}
+	printf("ret = %d, s = %s\n", ret, s);
 	return (0);
-}
+}*/
