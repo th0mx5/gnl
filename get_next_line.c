@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/13 17:22:27 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/14 14:16:29 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ static int	ft_strclen(char *s, char c)
 static int	ft_read_fd(const int fd, char **tmp_line)
 {
 	char	buff[BUFF_SIZE + 1];
-	//char	*p_s;
 	int		ret;
 
 	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
