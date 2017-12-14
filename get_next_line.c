@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/14 14:39:05 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/14 15:35:25 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,36 @@ static int	ft_strclen(char *s, char c)
 	return (i);
 }
 
-static int	ft_read_fd(const int fd, char **tmp_line)
+static int	ft_read_fd(const int fd, char **s)
 {
 	char	buff[BUFF_SIZE + 1];
+	char	*tmp;
 	int		ret;
 
 	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
 	{
 		buff[ret] = 0;
-		*tmp_line = ft_strjoin(*tmp_line, buff);
+		tmp = *s;
+		*s = ft_strjoin(*s, buff);
+		free(tmp);
 		if (ft_strchr(buff, '\n'))
 			break ;
 	}
 	if (ret == -1)
 		return (-1);
-	if (ret == 0 && *tmp_line[0] == '\0')
+	if (ret == 0 && *s[0] == '\0')
 		return (0);
-	*tmp_line = ft_strsub(*tmp_line, 0, ft_strlen(*tmp_line));
+	tmp = *s;
+	if (!(*s = ft_strsub(*s, 0, ft_strlen(*s))))
+		return (-1);
+	free(tmp);
 	return (1);
 }
 
 int			get_next_line(const int fd, char **line)
 {
 	static char	*s;
+	char		*tmp;
 	int			ret;
 	int			f_endline;
 
@@ -57,24 +64,11 @@ int			get_next_line(const int fd, char **line)
 	if ((ret = ft_read_fd(fd, &s)) == -1)
 		return (-1);
 	f_endline = ft_strclen(s, '\n');
-	*line = ft_strsub(s, 0, f_endline);
+	if (!(*line = ft_strsub(s, 0, f_endline)))
+		return (-1);
+	tmp = s;
 	if (!(s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline)))
 		return (-1);
+	free(tmp);
 	return (ret);
 }
-
-/*int			main(void)
-{
-	int		fd;
-	char	*s;
-	int		ret;
-
-	ret = 0;
-	fd = open("sample", O_RDONLY);
-	if (fd == -1)
-		return (-1);
-	while ((ret = get_next_line((const int)fd, &s) > 0))
-		printf("ret = %d, s = %s\n", ret, s);
-	printf("ret = %d, s = %s\n", ret, s);
-	return (0);
-}*/
