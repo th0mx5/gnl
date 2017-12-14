@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/14 14:16:29 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/14 14:39:05 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,20 +53,13 @@ int			get_next_line(const int fd, char **line)
 	if (fd < 0 || line == NULL)
 		return (-1);
 	if (s == NULL)
-	{
 		s = ft_strnew(1);
-		ret = ft_read_fd(fd, &s);
-		f_endline = ft_strclen(s, '\n');
-		*line = ft_strsub(s, 0, f_endline);
-		s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline);
-	}
-	else
-	{
-		ret = ft_read_fd(fd, &s);
-		f_endline = ft_strclen(s, '\n');
-		*line = ft_strsub(s, 0, f_endline);
-		s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline);
-	}
+	if ((ret = ft_read_fd(fd, &s)) == -1)
+		return (-1);
+	f_endline = ft_strclen(s, '\n');
+	*line = ft_strsub(s, 0, f_endline);
+	if (!(s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline)))
+		return (-1);
 	return (ret);
 }
 
