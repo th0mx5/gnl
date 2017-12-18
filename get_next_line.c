@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/14 15:35:25 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/18 16:38:12 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,22 +52,23 @@ static int	ft_read_fd(const int fd, char **s)
 
 int			get_next_line(const int fd, char **line)
 {
-	static char	*s;
+	static char	*s[OPEN_MAX];
 	char		*tmp;
 	int			ret;
 	int			f_endline;
 
 	if (fd < 0 || line == NULL)
 		return (-1);
-	if (s == NULL)
-		s = ft_strnew(1);
-	if ((ret = ft_read_fd(fd, &s)) == -1)
+	if (s[fd] == NULL)
+		s[fd] = ft_strnew(1);
+	if ((ret = ft_read_fd(fd, &s[fd])) == -1)
 		return (-1);
-	f_endline = ft_strclen(s, '\n');
-	if (!(*line = ft_strsub(s, 0, f_endline)))
+	f_endline = ft_strclen(s[fd], '\n');
+	if (!(*line = ft_strsub(s[fd], 0, f_endline)))
 		return (-1);
-	tmp = s;
-	if (!(s = ft_strsub(s, f_endline + 1, ft_strlen(s) - f_endline)))
+	tmp = s[fd];
+	s[fd] = ft_strsub(s[fd], f_endline + 1, ft_strlen(s[fd]) - f_endline);
+	if (!(s[fd]))
 		return (-1);
 	free(tmp);
 	return (ret);
