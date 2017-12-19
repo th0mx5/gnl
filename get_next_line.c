@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/18 16:38:12 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/19 16:56:49 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,6 @@ static int	ft_read_fd(const int fd, char **s)
 		return (-1);
 	if (ret == 0 && *s[0] == '\0')
 		return (0);
-	tmp = *s;
-	if (!(*s = ft_strsub(*s, 0, ft_strlen(*s))))
-		return (-1);
-	free(tmp);
 	return (1);
 }
 
@@ -57,10 +53,10 @@ int			get_next_line(const int fd, char **line)
 	int			ret;
 	int			f_endline;
 
-	if (fd < 0 || line == NULL)
+	if (fd < 0 || fd > OPEN_MAX ||line == NULL)
 		return (-1);
-	if (s[fd] == NULL)
-		s[fd] = ft_strnew(1);
+	if (s[fd] == NULL && !(s[fd] = ft_strnew(1)))
+		return (-1);
 	if ((ret = ft_read_fd(fd, &s[fd])) == -1)
 		return (-1);
 	f_endline = ft_strclen(s[fd], '\n');
