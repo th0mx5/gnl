@@ -6,7 +6,7 @@
 /*   By: thbernar <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/09 12:57:35 by thbernar          #+#    #+#             */
-/*   Updated: 2017/12/19 16:56:49 by thbernar         ###   ########.fr       */
+/*   Updated: 2017/12/19 17:25:41 by thbernar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int			get_next_line(const int fd, char **line)
 	int			ret;
 	int			f_endline;
 
-	if (fd < 0 || fd > OPEN_MAX ||line == NULL)
+	if (fd < 0 || fd > OPEN_MAX || line == NULL)
 		return (-1);
 	if (s[fd] == NULL && !(s[fd] = ft_strnew(1)))
 		return (-1);
